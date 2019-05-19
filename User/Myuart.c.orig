@@ -1,0 +1,46 @@
+#include "User/Myuart.h"
+
+void initUART0()
+{
+	//使能UART外设
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+	//GPIO模式配置 PA0--RX PA1--TX 
+	GPIOPinConfigure(GPIO_PA0_U0RX);
+	GPIOPinConfigure(GPIO_PA1_U0TX);
+	//GPIO的UART模式配置
+	GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+	//UART协议配置 波特率115200 8位 1停止位  无校验位
+	UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200,
+			(UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+					UART_CONFIG_PAR_NONE));
+	//UART禁用FIFO 默认FIFO Level为4/8 寄存器满8字节后产生中断
+	//禁用后接收1位就产生中断
+	UARTFIFODisable(UART0_BASE);
+	//使能UART0中断
+	IntEnable(INT_UART0);	
+	//使能UART0接收中断
+	UARTIntEnable(UART0_BASE,UART_INT_RX);
+	//UART中断地址注册
+	UARTIntRegister(UART0_BASE,UART0IntHandler);
+	//全局中断使能
+	IntMasterEnable();
+}
+//UART7中断函数
+void UART0IntHandler(void)
+{
+	//获取中断标志 原始中断状态 不屏蔽中断标志
+		//uint32_t flag = UARTIntStatus(UART0_BASE,0);
+	//获取中断标志 原始中断状态 屏蔽中断标志
+	uint32_t flag = UARTIntStatus(UART0_BASE,1);
+	//清除中断标志
+	UARTIntClear(UART0_BASE,flag);
+	if(flag&UART_INT_RX)
+		//UARTCharsAvail()//判断FIFO是否还有数据
+		while(UARTCharsAvail(UART0_BASE))
+		{
+			unsigned char data = UARTCharGet(UART0_BASE); //保存本次接收数据
+			UARTCharPut(UART0_BASE,data);
+		}
+}
+

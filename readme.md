@@ -1,0 +1,8 @@
+TM4C山外鹰眼
+
+数据 D0-D7 PB0-PB7
+场中断 PE2
+帧中断 PA6
+
+SCCB SCL PE0
+SCCB SDA PE1

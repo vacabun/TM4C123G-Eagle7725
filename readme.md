@@ -1,8 +1,11 @@
-TM4C山外鹰眼
+Camera (Eagle 7725) driver for Tiva™ C Series TM4C123GH6PM Microcontroller.
 
-数据 D0-D7 PB0-PB7
-场中断 PE2
-帧中断 PA6
 
-SCCB SCL PE0
-SCCB SDA PE1
+
+| Signal |  Pin  |
+|  ----  | ----  |
+| Data D0-D7|  PB0-PB7 |
+|  FCLK  | PE2 |
+|  PCLK  | PA6 |
+| SCCB SCL | PE0 |
+| SCCB SDA | PE1 |
